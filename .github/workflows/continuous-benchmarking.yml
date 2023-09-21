@@ -21,10 +21,7 @@
 # SOFTWARE.
 name: Run scheduled experiments (New)
 
-on: 
-  workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *'
+on: push
   
 jobs:
 
