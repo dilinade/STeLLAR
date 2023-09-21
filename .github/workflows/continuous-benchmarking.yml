@@ -82,7 +82,7 @@ jobs:
     name: Run warm function experiments
     runs-on: self-hosted
     env:
-      working-directory: ./src
+      working-directory: src
     steps:
       - name: AWS Warm Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
@@ -93,7 +93,7 @@ jobs:
     needs: run_warm_experiments
     runs-on: self-hosted
     env:
-      working-directory: ./src
+      working-directory: src
     steps:
     
       - name: AWS Cold Function Invocation - Baseline
