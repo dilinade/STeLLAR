@@ -79,16 +79,6 @@ jobs:
         with:
           ref: continuous-benchmarking-new
 
-      - name: Check syntax
-        uses: golangci/golangci-lint-action@v3.3.1
-        with:
-          working-directory: ${{env.working-directory}}
-          version: v1.51.2
-          args: --timeout 50m --verbose --skip-dirs raw-code
-          skip-cache: true
-          skip-pkg-cache: true
-          skip-build-cache: true
-
       - name: Clean and build client binary
         working-directory: ${{env.working-directory}}
         run: |
