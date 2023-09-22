@@ -26,7 +26,10 @@ on: push
 jobs:
   clean_up:
     name: Clean-up workspace
-    runs-on: self-hosted
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner: [ stellar-continuous, stellar-continuous-gcr ]
     env:
       working-directory: ./src
     steps:
@@ -38,7 +41,10 @@ jobs:
   build_client:
     name: Build framework
     needs: clean_up
-    runs-on: self-hosted
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner: [ stellar-continuous, stellar-continuous-gcr ]
     env:
       working-directory: ./src
     steps:
@@ -47,7 +53,22 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: us-west-2
+          aws-region: us-west-1
+
+      - id: "auth"
+        name: Configure GCR credentials
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{secrets.GCR_CREDENTIALS}}"
+
+      - name: "Set up gcloud"
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          version: ">= 363.0.0"
+      - name: Set up Go 1.21
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21
 
       - name: Setup go
         uses: actions/setup-go@v3
@@ -79,6 +100,7 @@ jobs:
 
   run_warm_experiments_aws:
     name: Run AWS warm function experiments
+    needs: build_client
     runs-on: [self-hosted, aws]
     env:
       working-directory: src
@@ -89,6 +111,7 @@ jobs:
 
   run_warm_experiments_gcr:
     name: Run GCR warm function experiments
+    needs: build_client
     runs-on: [self-hosted, gcr]
     env:
       working-directory: src
