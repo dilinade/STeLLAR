@@ -79,7 +79,7 @@ jobs:
 
   run_warm_experiments_aws:
     name: Run AWS warm function experiments
-    runs-on: self-hosted
+    runs-on: [self-hosted, aws]
     env:
       working-directory: src
     steps:
@@ -100,7 +100,7 @@ jobs:
   run_cold_experiments_aws:
     name: Run AWS cold function experiments
     needs: run_warm_experiments_aws
-    runs-on: self-hosted
+    runs-on: [self-hosted, aws]
     env:
       working-directory: src
     steps:
