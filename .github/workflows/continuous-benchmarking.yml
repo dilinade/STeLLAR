@@ -70,8 +70,6 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: 1.19
-        env:
-          GO111MODULE: off
 
       - name: Install dependencies
         run: sudo apt update && sudo apt install -y libsnmp-dev build-essential zip docker.io
@@ -80,14 +78,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: continuous-benchmarking-new
-        env:
-          GO111MODULE: off
 
       - name: Check syntax
         uses: golangci/golangci-lint-action@v3.3.1
         with:
           working-directory: ${{env.working-directory}}
-          args: --timeout 15m --skip-dirs raw-code
+          args: --timeout 5m --verbose --skip-dirs raw-code
           skip-cache: true
           skip-pkg-cache: true
           skip-build-cache: true
