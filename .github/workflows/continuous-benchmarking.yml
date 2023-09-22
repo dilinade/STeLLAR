@@ -29,7 +29,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        runner: [ gcr ]
+        runner: [ gcr, aws ]
     env:
       working-directory: ./src
     steps:
@@ -44,7 +44,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        runner: [ gcr ]
+        runner: [ gcr, aws ]
     env:
       working-directory: ./src
     steps:
@@ -98,7 +98,7 @@ jobs:
   run_warm_experiments_aws:
     name: Run AWS warm function experiments
     needs: build_client
-    runs-on: [self-hosted, aws, new]
+    runs-on: [self-hosted, aws]
     env:
       working-directory: src
     steps:
@@ -120,7 +120,7 @@ jobs:
   run_cold_experiments_aws:
     name: Run AWS cold function experiments
     needs: run_warm_experiments_aws
-    runs-on: [self-hosted, aws, new]
+    runs-on: [self-hosted, aws]
     env:
       working-directory: src
     steps:
