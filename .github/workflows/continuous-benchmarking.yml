@@ -48,6 +48,7 @@ jobs:
     env:
       working-directory: ./src
     steps:
+      - uses: TooMuch4U/runner-post-cleanup@v2.1
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
         with:
@@ -81,6 +82,7 @@ jobs:
       working-directory: src
 
     steps:
+      - uses: TooMuch4U/runner-post-cleanup@v2.1
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
         with:
@@ -128,6 +130,7 @@ jobs:
       DOCKER_HUB_USERNAME: ${{secrets.DOCKER_HUB_USERNAME}}
       DOCKER_HUB_ACCESS_TOKEN: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
     steps:      
+      - uses: TooMuch4U/runner-post-cleanup@v2.1
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
         with:
@@ -174,6 +177,7 @@ jobs:
     env:
       working-directory: src
     steps:
+      - uses: TooMuch4U/runner-post-cleanup@v2.1
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
         with:
@@ -221,6 +225,7 @@ jobs:
       DOCKER_HUB_USERNAME: ${{secrets.DOCKER_HUB_USERNAME}}
       DOCKER_HUB_ACCESS_TOKEN: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
     steps:
+      - uses: TooMuch4U/runner-post-cleanup@v2.1
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
         with:
