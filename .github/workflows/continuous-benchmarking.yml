@@ -89,7 +89,7 @@ jobs:
     steps:
       - name: AWS Warm Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
-        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-aws.json -db -w
+        run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-aws.json -db -w
 
   run_warm_experiments_gcr:
     name: Run GCR warm function experiments
@@ -102,7 +102,7 @@ jobs:
     steps:
       - name: GCR Warm Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
-        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-gcr.json -db -w
+        run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-gcr.json -db -w
 
   run_cold_experiments_aws:
     name: Run AWS cold function experiments
@@ -113,7 +113,7 @@ jobs:
     steps:
       - name: AWS Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
-        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-aws.json -db
+        run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-aws.json -db
 
   run_cold_experiments_gcr:
     name: Run GCR cold function experiments
@@ -126,4 +126,4 @@ jobs:
     steps:
       - name: AWS Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
-        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-gcr.json -db
+        run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-gcr.json -db
