@@ -60,7 +60,7 @@ jobs:
 
       - name: Build client binary
         working-directory: ${{env.working-directory}}
-        run: go build -o stellar main.go 
+        run: CGO_ENABLED=0 go build -o stellar main.go 
 
       - name: Package client artifact
         working-directory: ${{env.working-directory}}
