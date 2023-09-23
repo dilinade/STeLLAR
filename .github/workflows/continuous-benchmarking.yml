@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: STeLLAR-build
-          path: ./build.tar
+          path: ${{env.working-directory}}/build.tar
           retention-days: 1
 
   run_warm_experiments_aws:
