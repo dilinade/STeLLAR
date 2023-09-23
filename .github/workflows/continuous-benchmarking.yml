@@ -48,30 +48,29 @@ jobs:
     env:
       working-directory: ./src
     steps:
-      - id: "auth"
-        name: Configure GCR credentials
-        uses: "google-github-actions/auth@v1"
-        with:
-          credentials_json: "${{secrets.GCR_CREDENTIALS}}"
-
-      - name: "Set up gcloud"
-        uses: "google-github-actions/setup-gcloud@v1"
-        with:
-          version: ">= 363.0.0"
-
-      - name: Set up Go 1.19
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.19
-
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
         with:
           ref: continuous-benchmarking-new
 
-      - name: Clean and build client binary
+      - name: Build client binary
         working-directory: ${{env.working-directory}}
-        run: go build -o stellar main.go
+        run: |
+          docker build -t stellar .
+          docker create --name temp stellar /bin/bash
+      - name: Package client artifact
+        run: |
+          mkdir -p "setup/deployment/raw-code"
+          docker cp temp:/app/stellar ./main
+          docker cp temp:/app/setup/deployment/raw-code/functions setup/deployment/raw-code/functions
+          tar -czvf build.tar ./main ./setup/deployment/raw-code/functions
+
+      - name: Upload client artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: STeLLAR-build
+          path: build.tar
+          retention-days: 1
 
   run_warm_experiments_aws:
     name: Run AWS warm function experiments
@@ -79,13 +78,44 @@ jobs:
     runs-on: [self-hosted, aws]
     env:
       working-directory: src
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
     steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+        with:
+          ref: continuous-benchmarking-new
+      - name: Configure AWS credentials using EASE lab account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-west-1
+
       - name: Configure AWS credentials
         working-directory: ${{env.working-directory}}
         run: serverless config credentials -o --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
+
+      - name: Set up Go 1.21
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21
+
+      - name: Set up Node.js 16.16.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.16.0
+
+      - name: Install Serverless framework and related plugins
+        run: npm install -g serverless
+
+      - name: Download client artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: STeLLAR-build
+      
+      - name: Untar client build
+        working-directory: ${{env.working-directory}}
+        run: tar --strip-components=1 -xvf ../build.tar -C .
 
       - name: AWS Warm Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
@@ -99,7 +129,42 @@ jobs:
       working-directory: src
       DOCKER_HUB_USERNAME: ${{secrets.DOCKER_HUB_USERNAME}}
       DOCKER_HUB_ACCESS_TOKEN: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
-    steps:
+    steps:      
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+        with:
+          ref: continuous-benchmarking-new
+
+      - id: "auth"
+        name: Configure GCR credentials
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{secrets.GCR_CREDENTIALS}}"
+
+      - name: "Set up gcloud"
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          version: ">= 363.0.0"
+
+      - name: Set up Go 1.21
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21
+
+      - name: Set up Node.js 16.16.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.16.0
+
+      - name: Download client artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: STeLLAR-build
+
+      - name: Untar client build
+        working-directory: ${{env.working-directory}}
+        run: tar --strip-components=1 -xvf ../build.tar -C .
+
       - name: GCR Warm Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
         run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-gcr.json -db -w
@@ -110,9 +175,45 @@ jobs:
     runs-on: [self-hosted, aws]
     env:
       working-directory: src
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
     steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+        with:
+          ref: continuous-benchmarking-new
+      - name: Configure AWS credentials using EASE lab account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-west-1
+
+      - name: Configure AWS credentials
+        working-directory: ${{env.working-directory}}
+        run: serverless config credentials -o --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
+
+      - name: Set up Go 1.21
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21
+
+      - name: Set up Node.js 16.16.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.16.0
+
+      - name: Install Serverless framework and related plugins
+        run: npm install -g serverless
+
+      - name: Download client artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: STeLLAR-build
+      
+      - name: Untar client build
+        working-directory: ${{env.working-directory}}
+        run: tar --strip-components=1 -xvf ../build.tar -C .
+
+
       - name: AWS Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
         run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-aws.json -db
@@ -126,10 +227,41 @@ jobs:
       DOCKER_HUB_USERNAME: ${{secrets.DOCKER_HUB_USERNAME}}
       DOCKER_HUB_ACCESS_TOKEN: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
     steps:
-      - name: Configure AWS credentials
-        working-directory: ${{env.working-directory}}
-        run: serverless config credentials -o --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+        with:
+          ref: continuous-benchmarking-new
 
-      - name: AWS Cold Function Invocation - Baseline
+      - id: "auth"
+        name: Configure GCR credentials
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{secrets.GCR_CREDENTIALS}}"
+
+      - name: "Set up gcloud"
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          version: ">= 363.0.0"
+
+      - name: Set up Go 1.21
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21
+
+      - name: Set up Node.js 16.16.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.16.0
+
+      - name: Download client artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: STeLLAR-build
+
+      - name: Untar client build
+        working-directory: ${{env.working-directory}}
+        run: tar --strip-components=1 -xvf ../build.tar -C .
+
+      - name: GCR Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
         run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-gcr.json -db
