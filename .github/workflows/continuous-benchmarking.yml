@@ -47,13 +47,11 @@ jobs:
         runner: [ gcr, aws ]
     env:
       working-directory: ./src
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
     steps:
-      - name: Configure AWS credentials using EASE lab account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: us-west-1
+      - name: Configure AWS credentials
+        run: serverless config credentials --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
 
       - id: "auth"
         name: Configure GCR credentials
@@ -87,13 +85,6 @@ jobs:
     env:
       working-directory: src
     steps:
-      - name: Configure AWS credentials using EASE lab account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: us-west-1
-
       - name: AWS Warm Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
         run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-aws.json -db -w
@@ -118,13 +109,6 @@ jobs:
     env:
       working-directory: src
     steps:
-      - name: Configure AWS credentials using EASE lab account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: us-west-1
-
       - name: AWS Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
         run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-aws.json -db
