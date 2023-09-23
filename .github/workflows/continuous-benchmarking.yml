@@ -55,15 +55,11 @@ jobs:
 
       - name: Build client binary
         working-directory: ${{env.working-directory}}
-        run: |
-          docker build -t stellar .
-          docker create --name temp stellar /bin/bash
+        run: go build main.go -o stellar
+
       - name: Package client artifact
-        run: |
-          mkdir -p "setup/deployment/raw-code"
-          docker cp temp:/app/stellar ./main
-          docker cp temp:/app/setup/deployment/raw-code/functions setup/deployment/raw-code/functions
-          tar -czvf build.tar ./main ./setup/deployment/raw-code/functions
+        working-directory: ${{env.working-directory}}
+        run: tar -czvf build.tar ./stellar
 
       - name: Upload client artifact
         uses: actions/upload-artifact@v2
