@@ -97,6 +97,8 @@ jobs:
     runs-on: [self-hosted, gcr]
     env:
       working-directory: src
+      DOCKER_HUB_USERNAME: ${{secrets.DOCKER_HUB_USERNAME}}
+      DOCKER_HUB_ACCESS_TOKEN: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
     steps:
       - name: GCR Warm Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
@@ -119,6 +121,8 @@ jobs:
     runs-on: [self-hosted, gcr]
     env:
       working-directory: src
+      DOCKER_HUB_USERNAME: ${{secrets.DOCKER_HUB_USERNAME}}
+      DOCKER_HUB_ACCESS_TOKEN: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
     steps:
       - name: AWS Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
