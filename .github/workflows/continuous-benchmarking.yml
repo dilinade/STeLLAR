@@ -84,7 +84,7 @@ jobs:
 
     steps:
       - name: Configure AWS credentials
-        run: serverless config credentials --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
+        run: serverless config credentials -o --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
 
       - name: AWS Warm Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
@@ -126,7 +126,7 @@ jobs:
       DOCKER_HUB_ACCESS_TOKEN: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
     steps:
       - name: Configure AWS credentials
-        run: serverless config credentials --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
+        run: serverless config credentials -o --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
 
       - name: AWS Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
