@@ -67,10 +67,11 @@ jobs:
         run: tar -czvf build.tar ./stellar
 
       - name: Upload client artifact
+        working-directory: ${{env.working-directory}}
         uses: actions/upload-artifact@v2
         with:
           name: STeLLAR-build
-          path: build.tar
+          path: ./build.tar
           retention-days: 1
 
   run_warm_experiments_aws:
