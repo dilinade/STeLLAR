@@ -78,9 +78,7 @@ jobs:
 
       - name: Clean and build client binary
         working-directory: ${{env.working-directory}}
-        run: |
-          chmod +x build.sh
-          ./build.sh
+        run: go build -o stellar main.go
 
   run_warm_experiments_aws:
     name: Run AWS warm function experiments
