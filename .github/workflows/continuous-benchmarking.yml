@@ -47,12 +47,7 @@ jobs:
         runner: [ gcr, aws ]
     env:
       working-directory: ./src
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
     steps:
-      - name: Configure AWS credentials
-        run: serverless config credentials --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
-
       - id: "auth"
         name: Configure GCR credentials
         uses: "google-github-actions/auth@v1"
@@ -84,7 +79,13 @@ jobs:
     runs-on: [self-hosted, aws]
     env:
       working-directory: src
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
     steps:
+      - name: Configure AWS credentials
+        run: serverless config credentials --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
+
       - name: AWS Warm Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
         run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-aws.json -db -w
@@ -108,6 +109,8 @@ jobs:
     runs-on: [self-hosted, aws]
     env:
       working-directory: src
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
     steps:
       - name: AWS Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
@@ -122,6 +125,9 @@ jobs:
       DOCKER_HUB_USERNAME: ${{secrets.DOCKER_HUB_USERNAME}}
       DOCKER_HUB_ACCESS_TOKEN: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
     steps:
+      - name: Configure AWS credentials
+        run: serverless config credentials --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
+
       - name: AWS Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
         run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-gcr.json -db
