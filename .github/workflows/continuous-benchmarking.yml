@@ -44,7 +44,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        runner: [ gcr, aws ]
+        runner: [ aws ]
     env:
       working-directory: ./src
     steps:
@@ -125,7 +125,7 @@ jobs:
         run: |
           export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_KEY }}
-          sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-aws.json -db -w
+          ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-aws.json -db -w
 
   run_warm_experiments_gcr:
     name: Run GCR warm function experiments
@@ -168,7 +168,7 @@ jobs:
 
       - name: GCR Warm Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
-        run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-gcr.json -db -w
+        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/warm-baseline-gcr.json -db -w
 
   run_cold_experiments_aws:
     name: Run AWS cold function experiments
@@ -217,7 +217,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-        run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-aws.json -db
+        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-aws.json -db
 
   run_cold_experiments_gcr:
     name: Run GCR cold function experiments
@@ -260,4 +260,4 @@ jobs:
 
       - name: GCR Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
-        run: sudo ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-gcr.json -db
+        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-gcr.json -db
