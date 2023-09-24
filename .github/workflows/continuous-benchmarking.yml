@@ -133,12 +133,6 @@ jobs:
       DOCKER_HUB_USERNAME: ${{secrets.DOCKER_HUB_USERNAME}}
       DOCKER_HUB_ACCESS_TOKEN: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
     steps:      
-      - name: Store Docker username
-        run:  echo $DOCKER_HUB_USERNAME >> ~/docker_creds.txt
-
-      - name: Store Docker token
-        run:  echo $DOCKER_HUB_ACCESS_TOKEN >> ~/docker_creds.txt
-
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
         with:
