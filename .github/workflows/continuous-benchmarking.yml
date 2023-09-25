@@ -103,7 +103,7 @@ jobs:
           node-version: 16.16.0
 
       - name: Install Serverless framework and related plugins
-        run: npm install -g serverless
+        run: npm install -g --force serverless
 
       - name: Download client artifact
         uses: actions/download-artifact@v2
