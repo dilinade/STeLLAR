@@ -102,9 +102,6 @@ jobs:
         with:
           node-version: 16.16.0
 
-      - name: Install Serverless framework and related plugins
-        run: npm install -g --force serverless
-
       - name: Download client artifact
         uses: actions/download-artifact@v2
         with:
@@ -190,9 +187,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.16.0
-
-      - name: Install Serverless framework and related plugins
-        run: npm install -g serverless
 
       - name: Download client artifact
         uses: actions/download-artifact@v2
