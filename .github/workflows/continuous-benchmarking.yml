@@ -41,10 +41,7 @@ jobs:
   build_client:
     name: Build framework
     needs: clean_up
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      matrix:
-        runner: [ aws ]
+    runs-on: self-hosted
     env:
       working-directory: ./src
     steps:
