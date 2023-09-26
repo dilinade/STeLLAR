@@ -307,4 +307,4 @@ jobs:
 
       - name: Cloudflare Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
-        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-cloudflare.json -db -w
+        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-cloudflare.json -db
