@@ -279,7 +279,7 @@ jobs:
         run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-gcr.json -db
 
   run_cold_experiments_cloudflare:
-    name: Run Cloudflare warm function experiments
+    name: Run Cloudflare cold function experiments
     needs: run_warm_experiments_cloudflare
     runs-on: [self-hosted, cloudflare]
     env:
@@ -305,6 +305,6 @@ jobs:
         working-directory: ${{env.working-directory}}
         run: tar --strip-components=1 -xvf ../build.tar -C .
 
-      - name: Cloudflare Warm Function Invocation - Baseline
+      - name: Cloudflare Cold Function Invocation - Baseline
         working-directory: ${{env.working-directory}}
-        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/warm-function-invocations/cold-baseline-cloudflare.json -db -w
+        run: ./stellar -a 356764711652 -o latency-samples -c ../continuous-benchmarking/experiments/cold-function-invocations/cold-baseline-cloudflare.json -db -w
